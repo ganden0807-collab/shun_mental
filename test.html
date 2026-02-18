@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【試作】精神障害年金 等級判定機</title>
+    <style>
+        :root { --primary: #4a90e2; --bg: #f5f7f9; }
+        body { font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif; background: var(--bg); padding: 20px; color: #333; }
+        .card { max-width: 650px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h1 { font-size: 1.25rem; text-align: center; color: var(--primary); margin-bottom: 20px; }
+        .warning { font-size: 0.8rem; background: #fff5f5; color: #c53030; padding: 12px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #feb2b2; }
+        .q-row { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #edf2f7; }
+        label { display: block; font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; }
+        select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e0; background: #fff; font-size: 0.9rem; }
+        button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; margin-top: 20px; transition: opacity 0.2s; }
+        button:hover { opacity: 0.9; }
+        #resultArea { margin-top: 25px; display: none; padding: 20px; border-radius: 8px; text-align: center; }
+        .g1 { background: #fff5f7; border: 2px solid #f687b3; }
+        .g2 { background: #ebf8ff; border: 2px solid #63b3ed; }
+        .g3 { background: #f0fff4; border: 2px solid #68d391; }
+        .gn { background: #f7fafc; border: 2px solid #a0aec0; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>精神障害年金 等級判定シミュレーター</h1>
+    <div class="warning">
+        【免責事項】本ツールは厚生労働省「精神の障害に係る等級判定ガイドライン」に基づき機械的に計算するものです。実際の支給を保証するものではありません。
+    </div>
+
+    <div id="questions">
+        <div class="q-row"><label>1. 適切な食事</label><select class="score"><option value="1">できる</option><option value="2">概ねできるが援助が必要</option><option value="3">援助があればできるが困難</option><option value="4">できない</option></select></div>
+        <div class="q-row"><label>2. 身のまわりの清潔保持</label><select class="score"><option value="1">できる</option><option value="2">概ねできるが援助が必要</option><option value="3">援助があればできるが困難</option><option value="4">できない</option></select></div>
+        <div class="q-row"><label>3. 金銭管理・買い物</label><select class="score"><option value="1">できる</option><option value="2">概ねできるが援助が必要</option><option value="3">援助があればできるが困難</option><option value="4">できない</option></select></div>
+        <div class="q-row"><label>4. 通院・服薬</label><select class="score"><option value="1">できる</option><option value="2">概ねできるが援助が必要</option><option value="3">援助があればできるが困難</option><option value="4">できない</option></select></div>
+        <div class="q-row"><label>5. 他人との意思伝達・対人関係</label><select class="score"><option value="1">できる</option><option value="2">概ねできるが援助が必要</option><option value="3">援助があればできるが困難</option><option value="4">できない</option></select></div>
+        <div class="q-row"><label>6. 身辺の安全保持・危機の回避</label><select class="score"><option value="1">できる</option><option value="2">概ねできるが援助が必要</option><option value="3">援助があればできるが困難</option><option value="4">できない</option></select></div>
+        <div class="q-row"><label>7. 社会性（公共施設利用等）</label><select class="score"><option value="1">できる</option><option value="2">概ねできるが援助が必要</option><option value="3">援助があればできるが困難</option><option value="4">できない</option></select></div>
+    </div>
+
+    <div class="q-row" style="margin-top:20px; border-top: 2px solid var(--primary); padding-top:15px;">
+        <label>日常生活能力の程度（診断書の右側の評価想定）</label>
+        <select id="degree">
+            <option value="1">(1) 社会生活は普通にできる</option>
+            <option value="2">(2) 家庭内の単純な生活はできるが社会生活は制限がある</option>
+            <option value="3">(3) 家庭内でも著しい制限がある</option>
+            <option value="4">(4) 日常生活に全面的な援助が必要である</option>
+            <option value="5">(5) 精神障害を認めるが日常生活能力は保たれている</option>
+        </select>
+    </div>
+
+    <button onclick="checkGrade()">判定を実行する</button>
+
+    <div id="resultArea"></div>
+</div>
+
+<script>
+function checkGrade() {
+    const scores = document.querySelectorAll('.score');
+    let total = 0;
+    scores.forEach(s => total += parseInt(s.value));
+    const avg = total / 7;
+    const deg = parseInt(document.getElementById('degree').value);
+    
+    let res = ""; let cls = "";
+    // ガイドラインのマトリックス（簡略版ロジック）
+    if (deg >= 4 && avg >= 3.5) { res = "1級 相当"; cls = "g1"; }
+    else if ((deg >= 3 && avg >= 2.5) || (deg >= 4 && avg >= 2.0)) { res = "2級 相当"; cls = "g2"; }
+    else if (deg >= 2 && avg >= 2.0) { res = "3級 相当(※)"; cls = "g3"; }
+    else { res = "非該当の可能性"; cls = "gn"; }
+
+    const area = document.getElementById('resultArea');
+    area.style.display = "block";
+    area.className = cls;
+    area.innerHTML = `<h3>判定：${res}</h3><p>平均点：${avg.toFixed(2)} / 程度：(${deg})</p><small>※3級は障害厚生年金のみ対象です</small>`;
+}
+</script>
+</body>
+</html>
