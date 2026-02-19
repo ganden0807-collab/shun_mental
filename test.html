@@ -3,61 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>板橋・社会保障のしおり（判定ツール付）</title>
+    <title>【お試し版】精神障害等級判定シミュレーター</title>
     <style>
-        :root { --primary: #4a90e2; --bg: #f5f7f9; --safe: #68d391; }
-        body { font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif; background: var(--bg); padding: 20px; color: #333; line-height: 1.6; }
-        .card { max-width: 650px; margin: 0 auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        :root { --primary: #4a90e2; --bg: #f5f7f9; --text: #333; }
+        body { font-family: "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN", "Hiragino Sans", sans-serif; background: var(--bg); padding: 15px; color: var(--text); line-height: 1.5; }
+        .card { max-width: 600px; margin: 0 auto; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
         
-        h1 { font-size: 1.4rem; text-align: center; color: var(--primary); margin-bottom: 10px; }
-        .author { text-align: center; font-size: 0.9rem; color: #666; margin-bottom: 20px; }
+        h1 { font-size: 1.3rem; text-align: center; color: var(--primary); margin-bottom: 5px; }
+        .author { text-align: center; font-size: 0.85rem; color: #666; margin-bottom: 20px; }
 
-        /* ステートメント・免責事項 */
-        .statement { font-size: 0.85rem; background: #ebf8ff; border-left: 4px solid var(--primary); padding: 15px; margin-bottom: 20px; }
-        .warning { font-size: 0.8rem; background: #fff5f5; color: #c53030; padding: 12px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #feb2b2; }
+        /* 安心・安全のステートメント */
+        .safety-box { font-size: 0.8rem; background: #f0fff4; border: 1px solid #c6f6d5; padding: 12px; border-radius: 8px; margin-bottom: 20px; color: #2f855a; }
+        .safety-box ul { margin: 5px 0 0 0; padding-left: 20px; }
 
-        /* 判定エリアの装飾 */
+        .warning { font-size: 0.75rem; background: #fff5f5; color: #c53030; padding: 10px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #feb2b2; }
+
+        /* 質問エリア */
+        .section-title { font-size: 1rem; border-left: 4px solid var(--primary); padding-left: 10px; margin: 25px 0 15px; color: var(--primary); }
         .q-row { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #edf2f7; }
-        label { display: block; font-size: 0.9rem; font-weight: bold; margin-bottom: 8px; }
-        select { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #cbd5e0; background: #fff; font-size: 1rem; }
-        
-        button { width: 100%; padding: 16px; background: var(--primary); color: white; border: none; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        button:hover { opacity: 0.9; }
+        label { display: block; font-size: 0.9rem; font-weight: bold; margin-bottom: 6px; }
+        select { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #cbd5e0; background: #fff; font-size: 1rem; appearance: none; }
 
-        /* 判定結果 */
-        #resultArea { margin-top: 25px; display: none; padding: 20px; border-radius: 8px; text-align: center; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        
+        button { width: 100%; padding: 18px; background: var(--primary); color: white; border: none; border-radius: 10px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 25px; transition: transform 0.1s; }
+        button:active { transform: scale(0.98); }
+
+        /* 結果表示 */
+        #resultArea { margin-top: 25px; display: none; padding: 20px; border-radius: 10px; text-align: center; }
         .g1 { background: #fff5f7; border: 2px solid #f687b3; }
         .g2 { background: #ebf8ff; border: 2px solid #63b3ed; }
         .g3 { background: #f0fff4; border: 2px solid #68d391; }
         .gn { background: #f7fafc; border: 2px solid #a0aec0; }
         
-        .footer-note { font-size: 0.75rem; color: #888; text-align: center; margin-top: 30px; }
+        .footer-note { font-size: 0.7rem; color: #999; text-align: center; margin-top: 30px; }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <h1>板橋・社会保障のしおり</h1>
-    <div class="author">開発者：岩田俊介（社会福祉士）</div>
+    <h1>精神障害等級判定シミュレーター</h1>
+    <div class="author">開発：個人開発（お試し版）</div>
 
-    <div class="statement">
-        <strong>【安心の約束】</strong><br>
-        このツールは、利用者のプライバシーを最優先に設計されています。<br>
-        ・<strong>通信なし</strong>：外部へのデータ送信は一切行いません。<br>
-        ・<strong>個人情報不要</strong>：判定結果はあなたの端末内だけで完結します。<br>
-        ・<strong>専門家作成</strong>：板橋区の公開情報を社会福祉士の視点で整理しました。
+    <div class="safety-box">
+        <strong>🛡️ プライバシーと安全の約束</strong>
+        <ul>
+            <li>外部通信なし（完全オフライン）。</li>
+            <li>入力データはどこにも送信されません。</li>
+            <li>厚生労働省の公式ガイドラインに基づいた計算です。</li>
+        </ul>
     </div>
 
     <div class="warning">
-        【免責事項】本判定は厚生労働省のガイドラインに基づいた機械的なシミュレーションです。板橋区の公式監修を受けたものではなく、実際の支給や等級を保証するものではありません。
+        【免責事項】この判定はあくまで目安です。実際の結果は医師の診断書等に基づき審査機関が決定します。
     </div>
 
-    <hr style="border:0; border-top:1px solid #eee; margin:20px 0;">
-
-    <h2>精神障害等級 判定シミュレーター</h2>
-    
+    <div class="section-title">日常生活能力の判定（7項目）</div>
     <div id="questions">
         <div class="q-row"><label>1. 適切な食事</label><select class="score"><option value="1">できる</option><option value="2">概ねできるが援助が必要</option><option value="3">援助があればできるが困難</option><option value="4">できない</option></select></div>
         <div class="q-row"><label>2. 身のまわりの清潔保持</label><select class="score"><option value="1">できる</option><option value="2">概ねできるが援助が必要</option><option value="3">援助があればできるが困難</option><option value="4">できない</option></select></div>
@@ -68,14 +67,15 @@
         <div class="q-row"><label>7. 社会性（公共施設利用等）</label><select class="score"><option value="1">できる</option><option value="2">概ねできるが援助が必要</option><option value="3">援助があればできるが困難</option><option value="4">できない</option></select></div>
     </div>
 
-    <div class="q-row" style="margin-top:20px; border-top: 2px solid var(--primary); padding-top:15px;">
-        <label>日常生活能力の程度（診断書の総合評価想定）</label>
+    <div class="section-title">日常生活能力の程度</div>
+    <div class="q-row">
+        <label>診断書の総合評価（想定）</label>
         <select id="degree">
             <option value="1">(1) 社会生活は普通にできる</option>
-            <option value="2">(2) 家庭内はできるが社会生活は制限あり</option>
+            <option value="2">(2) 家庭内はできるが社会生活に制限あり</option>
             <option value="3">(3) 家庭内でも著しい制限がある</option>
             <option value="4">(4) 日常生活に全面的な援助が必要</option>
-            <option value="5">(5) 精神障害を認めるが能力は保たれている</option>
+            <option value="5">(5) 能力は保たれているが精神障害を認める</option>
         </select>
     </div>
 
@@ -83,7 +83,7 @@
 
     <div id="resultArea"></div>
 
-    <p class="footer-note">※最新の情報は板橋区公式サイト、または各福祉事務所窓口でご確認ください。</p>
+    <p class="footer-note">※このツールに個人情報の入力は一切不要です。</p>
 </div>
 
 <script>
@@ -104,7 +104,14 @@ function checkGrade() {
     const area = document.getElementById('resultArea');
     area.style.display = "block";
     area.className = cls;
-    area.innerHTML = `<h3>判定結果：${res}</h3><p>能力指数：${avg.toFixed(2)} / 程度評価：(${deg})</p><small>※3級は障害厚生年金のみが対象です。詳細は専門窓口へご相談ください。</small>`;
+    area.innerHTML = `
+        <h2 style="margin:0 0 10px 0;">判定：${res}</h2>
+        <p style="font-size:0.9rem; margin:0;">能力指数：${avg.toFixed(2)} / 程度評価：(${deg})</p>
+        <div style="text-align:left; font-size:0.8rem; margin-top:10px; border-top:1px dashed #ccc; padding-top:10px;">
+            ※3級は障害厚生年金のみが対象です。詳細は年金事務所等へお問い合わせください。
+        </div>
+    `;
+    area.scrollIntoView({ behavior: 'smooth' });
 }
 </script>
 </body>
